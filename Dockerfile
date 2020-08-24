@@ -8,6 +8,7 @@ RUN \
   apt upgrade -y && \
   apt install -y \
     software-properties-common \
+    sudo apt install libsdl2-2.0-0:i386 \
   && \
   apt autoremove -y && \
   apt autoclean
