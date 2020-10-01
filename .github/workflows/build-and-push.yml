@@ -1,0 +1,32 @@
+name: Publish image to docker hub
+on: # runs whenever a push is made PLUS every tuesday morning
+  push:
+    branches:
+    - "latest"
+  schedule:
+    - cron: "0 0 * * 2" # runs on every tuesday at 00:00 => patchday
+
+jobs:
+  build-and-push-to-registry:
+    name: Build docker image and push them to docker hub
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Set environment variables
+        shell: bash
+        run: |
+          echo "::set-env name=DOCKER_REPO_OWNER::${{ github.repository_owner }}" && echo "${DOCKER_REPO_OWNER}"
+          echo "::set-env name=DOCKER_IMAGE_NAME::$(echo '${{ github.repository }}' | sed 's|.*/containered-||' )" && echo "${DOCKER_IMAGE_NAME}"
+
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Build the tagged Docker image
+        shell: bash
+        run: docker build -t ${DOCKER_REPO_OWNER}/${DOCKER_IMAGE_NAME} .
+
+      - name: Push the tagged Docker image
+        shell: bash
+        run: |
+          docker login --username ${DOCKER_REPO_OWNER} --password ${{ secrets.DOCKERHUB_TOKEN }}
+          docker push ${DOCKER_REPO_OWNER}/${DOCKER_IMAGE_NAME}
+          docker logout
