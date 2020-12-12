@@ -1,4 +1,4 @@
-![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/tillhoff/steamcmd)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/tillhoff/containered-steamcmd/Publish%20image%20to%20docker%20hub)
 
 # steamcmd
 
