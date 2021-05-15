@@ -3,7 +3,7 @@ FROM ghcr.io/thetillhoff/debian
 # install prerequisites
 RUN apt install -y \
   software-properties-common \
-  libsdl2-2.0-0 \
+  libsdl2-2.0-0
 
 # install steamcmd
 RUN apt-add-repository non-free && \
