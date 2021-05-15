@@ -1,17 +1,9 @@
-FROM debian:buster
-
-LABEL maintainer="info@enforge.de"
+FROM ghcr.io/thetillhoff/debian
 
 # install prerequisites
-RUN \
-  apt update && \
-  apt upgrade -y && \
-  apt install -y \
-    software-properties-common \
-    libsdl2-2.0-0 \
-  && \
-  apt autoremove -y && \
-  apt autoclean
+RUN apt install -y \
+  software-properties-common \
+  libsdl2-2.0-0 \
 
 # install steamcmd
 RUN apt-add-repository non-free && \
@@ -22,7 +14,6 @@ RUN apt-add-repository non-free && \
   echo steam steam/license note '' | debconf-set-selections && \
     # disable license note text, so scolling won't be required
   apt install -y steamcmd
-
 
 RUN adduser --disabled-password steam
 WORKDIR /home/steam

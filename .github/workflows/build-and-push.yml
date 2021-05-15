@@ -1,26 +1,54 @@
-name: Publish image to docker hub
-on: # runs whenever a push is made PLUS every tuesday morning
+name: Publish image to container registry
+on:
   push:
-    branches:
-    - "latest"
-  schedule:
-    - cron: "0 0 * * 2" # runs on every tuesday at 00:00 => patchday
+    tags:
+    - "v[0-9]+.[0-9]+.[0-9]+"
 
 jobs:
-  build-and-push-to-registry:
-    name: Build docker image and push them to docker hub
+  # prerequisites:
+  #   name: Check for prerequisites
+  #   runs-on: ubuntu-20.04
+
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         ref: main
+
+  #     - name: Check whether elements exist for the current release-tag in CHANGELOG.md
+  #       shell: bash
+  #       run: |
+  #         grep "${GITHUB_REF##*/}" CHANGELOG.md
+
+  build-and-push:
+    # needs: prerequisites
+    name: Build tagged docker image and push to container registry
     runs-on: ubuntu-20.04
+    env:
+      CONTAINER_REGISTRY: ghcr.io
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
+
+      - uses: actions/checkout@v2
+        with:
+          ref: main
 
       - name: Build the tagged Docker image
         shell: bash
-        run: docker build -t ${{ github.repository_owner }}/$( echo ${{ github.repository }} | sed 's|.*/containered-||' ) .
+        run: |
+          docker build -t $CONTAINER_REGISTRY/${{ github.repository_owner }}/$( echo ${{ github.repository }} | sed 's|.*/containered-||' ):${GITHUB_REF##*/} .
+          docker build -t $CONTAINER_REGISTRY/${{ github.repository_owner }}/$( echo ${{ github.repository }} | sed 's|.*/containered-||' ):latest .
+
+      - name: Log into container registry
+        shell: bash
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io --username ${{ github.repository_owner }} --password-stdin
 
       - name: Push the tagged Docker image
         shell: bash
         run: |
-          docker login --username ${{ github.repository_owner }} --password ${{ secrets.DOCKERHUB_TOKEN }}
-          docker push ${{ github.repository_owner }}/$( echo ${{ github.repository }} | sed 's|.*/containered-||' )
+          docker push $CONTAINER_REGISTRY/${{ github.repository_owner }}/$( echo ${{ github.repository }} | sed 's|.*/containered-||' ):${GITHUB_REF##*/}
+          docker push $CONTAINER_REGISTRY/${{ github.repository_owner }}/$( echo ${{ github.repository }} | sed 's|.*/containered-||' ):latest
+
+      - name: Log out of container registry
+        shell: bash
+        run: |
           docker logout
