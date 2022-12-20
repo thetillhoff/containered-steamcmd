@@ -1,4 +1,4 @@
-FROM ghcr.io/thetillhoff/debian
+FROM debian:10
 
 # install prerequisites
 RUN apt install -y \
