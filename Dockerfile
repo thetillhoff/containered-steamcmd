@@ -1,4 +1,4 @@
-FROM debian:10
+FROM debian:12
 
 # install prerequisites
 RUN apt install -y \
