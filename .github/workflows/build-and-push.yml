@@ -22,7 +22,7 @@ jobs:
   build-and-push:
     # needs: prerequisites
     name: Build tagged docker image and push to container registry
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     env:
       CONTAINER_REGISTRY: ghcr.io
     steps:
