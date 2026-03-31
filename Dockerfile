@@ -1,4 +1,4 @@
-FROM debian:13
+FROM debian:trixie-20260316
 
 # install prerequisites
 RUN apt install -y \
