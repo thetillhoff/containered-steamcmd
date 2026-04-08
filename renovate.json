@@ -3,7 +3,8 @@
   "schedule": ["every weekend"],
   "extends": ["config:recommended", ":disableDependencyDashboard"],
   "lockFileMaintenance": {
-    "enabled": true
+    "enabled": true,
+    "automerge": true
   },
   "packageRules": [
     {
